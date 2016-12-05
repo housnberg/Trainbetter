@@ -6,6 +6,13 @@
     android:padding="@dimen/activity_horizontal_margin"
     android:orientation="vertical">
 
+    <ProgressBar
+        android:id="@+id/registration_progress" style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,22 +52,6 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/emailWrapper"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/usernameWrapper"
-            android:layout_marginTop="4dp">
-
-            <EditText
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="@string/email"/>
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
             android:id="@+id/passwordWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,16 +63,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/login"
+                android:imeOptions="actionUnspecified"
                 android:hint="@string/password"/>
 
         </android.support.design.widget.TextInputLayout>
 
         <Button
-            android:id="@+id/btn"
+            android:id="@+id/button_login"
             android:layout_marginTop="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"/>
+            android:text="@string/login"/>
 
     </LinearLayout>
 

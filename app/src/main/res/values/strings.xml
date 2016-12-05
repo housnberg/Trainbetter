@@ -16,4 +16,19 @@
     <!-- FRAGMENT TITLE -->
     <string name="login">Login</string>
     <string name="register">Register</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Username</string>
+    <string name="prompt_password">Password</string>
+
+    <string name="error_invalid_email">This username is too short</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_user_not_exists">Either the user does not exist or the password is wrong</string>
+    <string name="error_user_exists">The user already exists</string>
+
+    <string name="success_loggedin_signedup">Successfully, %1$s!</string>
+    <string name="success_loggedin">logged in</string>
+    <string name="success_signedup">signed up</string>
 </resources>

@@ -1,46 +1,50 @@
 package inf.reutlingenuniversity.de.trainbetter;
 
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.support.v4.app.Fragment;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.parse.ParseUser;
 
 import inf.reutlingenuniversity.de.trainbetter.loginout.LoginFragment;
 import inf.reutlingenuniversity.de.trainbetter.registration.RegistrationFragment;
+import inf.reutlingenuniversity.de.trainbetter.utils.ComponentHelper;
+import inf.reutlingenuniversity.de.trainbetter.utils.Status;
 
-
-
+/**
+ * Created by EL on 05.12.2016.
+ */
 public class MainActivity extends AppCompatActivity {
 
+    private View contentWrapper;
     private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-
-    private Fragment loginFragment;
-    private Fragment registrationFragment;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        contentWrapper = findViewById(R.id.content_wrapper);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        Resources resources = getResources();
+        int from = getIntent().getExtras().getInt(StartActivity.FROM);
+        if (from == LoginFragment.STATUS_CODE) {
+            ComponentHelper.createSnackbar(this, contentWrapper, String.format(resources.getString(R.string.success_loggedin_signedup), resources.getString(R.string.success_loggedin)), Status.SUCCESS).show();
+        } else if (from == RegistrationFragment.STATUS_CODE) {
+            ComponentHelper.createSnackbar(this, contentWrapper, String.format(resources.getString(R.string.success_loggedin_signedup), resources.getString(R.string.success_signedup)), Status.SUCCESS).show();
+        }
 
         initToolbar();
     }
-
-
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -48,53 +52,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-
-    private void setupViewPager(final ViewPager viewPager) {
-        ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        loginFragment = new LoginFragment();
-        registrationFragment = new RegistrationFragment();
-        pagerAdapter.addFragment(loginFragment, getResources().getString(R.string.login));
-        pagerAdapter.addFragment(registrationFragment, getResources().getString(R.string.register));
-
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(0);
-
-        /*
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                switch (state) {
-                    case ViewPager.SCROLL_STATE_IDLE:
-                        switch (viewPager.getCurrentItem()) {
-                            case 0:
-                                workoutFragment.shareFab(null);
-                                exercisesFragment.shareFab(mSharedFab);
-                                mSharedFab.show();
-                                break;
-                            case 1:
-                            default:
-                                exercisesFragment.shareFab(null);
-                                workoutFragment.shareFab(mSharedFab); // Share FAB to new displayed fragment
-                                mSharedFab.show();
-                                break;
-                        }
-                        //mSharedFab.show(); // Show animation
-                        break;
-                }
-            }
-        });
-        */
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         if (itemId == R.id.action_logout) {
             ParseUser.logOutInBackground();
+            logOut();
             return true;
         } else if (itemId == R.id.action_settings) {
             //Settings
@@ -118,4 +76,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void logOut() {
+        Intent logOutIntent = new Intent(MainActivity.this, StartActivity.class);
+        startActivity(logOutIntent);
+    }
 }
