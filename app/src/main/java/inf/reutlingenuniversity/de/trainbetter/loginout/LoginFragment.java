@@ -41,7 +41,6 @@ public class LoginFragment extends Fragment {
 
     private EditText usernameEditText;
     private EditText passwordEditText;
-    private EditText emailEditText;
     private View progressView;
 
     public  LoginFragment() {
@@ -108,8 +107,8 @@ public class LoginFragment extends Fragment {
             usernameEditText.setError(getString(R.string.error_field_required));
             focusView = usernameEditText;
             cancel = true;
-        } else if (!Validation.isEmailValid(email)) {
-            usernameEditText.setError(getString(R.string.error_invalid_email));
+        } else if (!Validation.isUsernameValid(email)) {
+            usernameEditText.setError(getString(R.string.error_invalid_username));
             focusView = usernameEditText;
             cancel = true;
         }

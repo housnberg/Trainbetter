@@ -93,13 +93,20 @@ public class RegistrationFragment extends Fragment {
 
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
+        String email = emailEditText.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        if (!TextUtils.isEmpty(password) && !Validation.isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) && !Validation.isPasswordValid(password)) {
             passwordEditText.setError(getString(R.string.error_invalid_password));
             focusView = passwordEditText;
+            cancel = true;
+        }
+
+        if (!Validation.isEmailValid(email)) {
+            emailEditText.setError(getString(R.string.error_invalid_email));
+            focusView = emailEditText;
             cancel = true;
         }
 
@@ -107,8 +114,8 @@ public class RegistrationFragment extends Fragment {
             usernameEditText.setError(getString(R.string.error_field_required));
             focusView = usernameEditText;
             cancel = true;
-        } else if (!Validation.isEmailValid(username)) {
-            usernameEditText.setError(getString(R.string.error_invalid_email));
+        } else if (!Validation.isUsernameValid(username)) {
+            usernameEditText.setError(getString(R.string.error_invalid_username));
             focusView = usernameEditText;
             cancel = true;
         }
@@ -117,7 +124,7 @@ public class RegistrationFragment extends Fragment {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            registrationTask = new UserRegistrationTask(username, password);
+            registrationTask = new UserRegistrationTask(username, email, password);
             registrationTask.execute((Void) null);
         }
     }
@@ -151,16 +158,19 @@ public class RegistrationFragment extends Fragment {
 
         private final String username;
         private final String password;
+        private final String email;
 
-        UserRegistrationTask(String username, String password) {
+        UserRegistrationTask(String username, String email, String password) {
             this.username = username;
             this.password = password;
+            this.email = email;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             ParseUser user = new ParseUser();
             user.setUsername(username);
+            user.setEmail(email);
             user.setPassword(password);
             user.signUpInBackground(new SignUpCallback() {
                 @Override
