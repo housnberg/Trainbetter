@@ -7,6 +7,9 @@ import android.os.Bundle;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseObject;
+
+import inf.reutlingenuniversity.de.trainbetter.model.Workout;
 
 public class TrainBetterApplication extends Application {
 
@@ -31,6 +34,7 @@ public class TrainBetterApplication extends Application {
 
         Parse.enableLocalDatastore(this);
 
+        ParseObject.registerSubclass(Workout.class);
         Parse.initialize(new Parse.Configuration.Builder(getApplicationContext())
                 .applicationId(parseAppId)
                 .server(parseAppUrl)   // '/' important after 'parse'

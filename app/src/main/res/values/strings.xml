@@ -2,6 +2,8 @@
     <!-- GENERAL -->
     <string name="app_name">TrainBetter</string>
 
+    <string name="workout_activity">Workouts</string>
+
     <string name="meta_parse_application_id">barassistent</string>
     <string name="meta_parse_application_url">http://134.103.176.138:1337/parse/</string>
 
