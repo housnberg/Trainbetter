@@ -12,12 +12,8 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.parse.ParseUser;
-
 import inf.reutlingenuniversity.de.trainbetter.loginout.LoginFragment;
 import inf.reutlingenuniversity.de.trainbetter.registration.RegistrationFragment;
-
-
 
 public class StartActivity extends AppCompatActivity {
 
@@ -93,7 +89,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     public void startMainActivity(int from) {
-        Intent loginIntent = new Intent(StartActivity.this, MainActivity.class);
+        Intent loginIntent = new Intent(StartActivity.this, WorkoutOverviewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt(StartActivity.FROM, from);
         loginIntent.putExtras(bundle);

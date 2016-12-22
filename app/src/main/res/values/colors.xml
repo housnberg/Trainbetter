@@ -12,7 +12,7 @@
     <color name="blue">#507299</color>
 
     <color name="colorPrimaryText">#FFFFFF</color>
-    <color name="colorSecondaryText">#F5F5F5</color>
+    <color name="colorSecondaryText">#F3F5F6</color>
     <color name="colorDivider">@color/windowBackground</color>
 
     <color name="windowBackground">#EBEDF0</color>

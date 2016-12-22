@@ -9,7 +9,10 @@ import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseObject;
 
+import inf.reutlingenuniversity.de.trainbetter.model.Exercise;
+import inf.reutlingenuniversity.de.trainbetter.model.Image;
 import inf.reutlingenuniversity.de.trainbetter.model.Workout;
+import inf.reutlingenuniversity.de.trainbetter.model.WorkoutExercise;
 
 public class TrainBetterApplication extends Application {
 
@@ -24,26 +27,27 @@ public class TrainBetterApplication extends Application {
         String parseAppUrl = null;
 
         try {
-            ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-            Bundle bundle = ai.metaData;
+            ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = applicationInfo.metaData;
             parseAppId = bundle.getString(PARSE_APPLICATION_ID_NAME);
             parseAppUrl = bundle.getString(PARSE_APPLICATION_URL_NAME);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
+        ParseObject.registerSubclass(Workout.class);
+        ParseObject.registerSubclass(Exercise.class);
+        ParseObject.registerSubclass(WorkoutExercise.class);
+        ParseObject.registerSubclass(Image.class);
+
         Parse.enableLocalDatastore(this);
 
-        ParseObject.registerSubclass(Workout.class);
         Parse.initialize(new Parse.Configuration.Builder(getApplicationContext())
                 .applicationId(parseAppId)
-                .server(parseAppUrl)   // '/' important after 'parse'
+                .server(parseAppUrl)
                 .build());
 
-        //ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();
-        // Optionally enable public read access.
-        // defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
     }
 

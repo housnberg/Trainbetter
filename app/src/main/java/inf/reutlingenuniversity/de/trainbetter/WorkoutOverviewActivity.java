@@ -1,33 +1,26 @@
 package inf.reutlingenuniversity.de.trainbetter;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import inf.reutlingenuniversity.de.trainbetter.loginout.LoginFragment;
+import inf.reutlingenuniversity.de.trainbetter.model.Exercise;
 import inf.reutlingenuniversity.de.trainbetter.model.Workout;
+import inf.reutlingenuniversity.de.trainbetter.model.WorkoutExercise;
 import inf.reutlingenuniversity.de.trainbetter.registration.RegistrationFragment;
 import inf.reutlingenuniversity.de.trainbetter.utils.ComponentHelper;
 import inf.reutlingenuniversity.de.trainbetter.utils.Status;
@@ -37,7 +30,7 @@ import inf.reutlingenuniversity.de.trainbetter.workout.WorkoutsOverviewAdapter;
 /**
  * Created by EL on 05.12.2016.
  */
-public class MainActivity extends AppCompatActivity {
+public class WorkoutOverviewActivity extends LoggedInActivity {
 
     private View contentWrapper;
     private Toolbar toolbar;
@@ -62,13 +55,27 @@ public class MainActivity extends AppCompatActivity {
 
         initToolbar();
 
-        ParseQuery<Workout> gameQuery = ParseQuery.getQuery(Workout.class);
-        gameQuery.whereEqualTo("userPointer", ParseUser.getCurrentUser());
-        gameQuery.findInBackground(new FindCallback<Workout>() {
+        ParseQuery<Workout> workoutQuery = ParseQuery.getQuery(Workout.class);
+        workoutQuery.whereEqualTo(Workout.USER_POINTER, ParseUser.getCurrentUser());
+        workoutQuery.findInBackground(new FindCallback<Workout>() {
             @Override
             public void done(List<Workout> resultSet, ParseException e) {
                 if (e == null) {
                     workouts = resultSet;
+                    workouts.get(0).findWorkoutExercises(new FindCallback<WorkoutExercise>() {
+                        @Override
+                        public void done(List<WorkoutExercise> objects, ParseException e) {
+                            for (WorkoutExercise object : objects) {
+                                Log.i("parse", object.getOrder() + "");
+                                object.getExercise().fetchIfNeededInBackground(new GetCallback<Exercise>() {
+                                    @Override
+                                    public void done(Exercise object, ParseException e) {
+                                        Log.i("parse", object.getName());
+                                    }
+                                });
+                            }
+                        }
+                    });
                     setUpRecyclerView();
                 }
             }
@@ -77,17 +84,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-        RecyclerView rvContacts = (RecyclerView) findViewById(R.id.rvContacts);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycer_view);
 
         WorkoutsOverviewAdapter woAdapter = new WorkoutsOverviewAdapter(this, workouts);
 
-
         RecyclerView.ItemDecoration spacesItemDecoration = new SpacesItemDecoration(16);
-        rvContacts.addItemDecoration(spacesItemDecoration);
+        recyclerView.addItemDecoration(spacesItemDecoration);
 
-        rvContacts.setAdapter(woAdapter);
+        recyclerView.setAdapter(woAdapter);
         // Set layout manager to position the items
-        rvContacts.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
+
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
     }
 
     private void initToolbar() {
@@ -95,33 +103,5 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.toolbar_main, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.action_logout) {
-            ParseUser.logOutInBackground();
-            logOut();
-            return true;
-        } else if (itemId == R.id.action_settings) {
-            //Settings
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void logOut() {
-        Intent logOutIntent = new Intent(MainActivity.this, StartActivity.class);
-        startActivity(logOutIntent);
     }
 }
