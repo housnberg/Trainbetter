@@ -1,5 +1,6 @@
 package inf.reutlingenuniversity.de.trainbetter;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,9 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -41,7 +44,7 @@ public class WorkoutOverviewActivity extends LoggedInActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_workout_overview);
 
         contentWrapper = findViewById(R.id.content_wrapper);
 
@@ -62,6 +65,7 @@ public class WorkoutOverviewActivity extends LoggedInActivity {
             public void done(List<Workout> resultSet, ParseException e) {
                 if (e == null) {
                     workouts = resultSet;
+                    //ParseObject.pinAllInBackground(workouts);
                     workouts.get(0).findWorkoutExercises(new FindCallback<WorkoutExercise>() {
                         @Override
                         public void done(List<WorkoutExercise> objects, ParseException e) {
@@ -80,22 +84,31 @@ public class WorkoutOverviewActivity extends LoggedInActivity {
                 }
             }
         });
-
     }
 
     private void setUpRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycer_view);
 
-        WorkoutsOverviewAdapter woAdapter = new WorkoutsOverviewAdapter(this, workouts);
+        WorkoutsOverviewAdapter woAdapter = new WorkoutsOverviewAdapter(this, workouts, new OnParseObjectClickListener() {
+            @Override
+            public void onParseObjectClick(ParseObject workout) {
+                startWorkoutDetailsActivity((Workout) workout);
+            }
+        });
 
         RecyclerView.ItemDecoration spacesItemDecoration = new SpacesItemDecoration(16);
         recyclerView.addItemDecoration(spacesItemDecoration);
 
         recyclerView.setAdapter(woAdapter);
-        // Set layout manager to position the items
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
 
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
+    }
+
+    private void startWorkoutDetailsActivity(Workout workout) {
+        Intent workoutDetailIntent = new Intent(getApplicationContext(), WorkoutDetailsActivity.class);
+        workoutDetailIntent.putExtra("id", workout.getObjectId());
+        startActivity(workoutDetailIntent);
     }
 
     private void initToolbar() {
@@ -103,5 +116,15 @@ public class WorkoutOverviewActivity extends LoggedInActivity {
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 }

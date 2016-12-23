@@ -13,6 +13,8 @@ import com.parse.ParseUser;
 
 @ParseClassName("Workout")
 public class Workout extends ParseObject {
+    //ToDo: Currently, there is no possibility to make an ParseObject implementing Parcelabel.
+    //ToDo: Since Parcelabel is more performant than Serialization, you should refactor all ParseObjects when ParceObject is combinable with Parcelabel.
 
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";

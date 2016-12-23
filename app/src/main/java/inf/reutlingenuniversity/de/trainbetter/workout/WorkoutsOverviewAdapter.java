@@ -15,9 +15,11 @@ import android.widget.TextView;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 
 import java.util.List;
 
+import inf.reutlingenuniversity.de.trainbetter.OnParseObjectClickListener;
 import inf.reutlingenuniversity.de.trainbetter.R;
 import inf.reutlingenuniversity.de.trainbetter.model.Workout;
 import inf.reutlingenuniversity.de.trainbetter.utils.Helper;
@@ -27,12 +29,14 @@ import inf.reutlingenuniversity.de.trainbetter.utils.Helper;
  */
 public class WorkoutsOverviewAdapter extends RecyclerView.Adapter<WorkoutsOverviewAdapter.ViewHolder> {
 
-    private List<Workout> workouts;
-    private Context context;
+    private final List<Workout> workouts;
+    private final Context context;
+    private final OnParseObjectClickListener listener;
 
-    public WorkoutsOverviewAdapter(Context context, List<Workout> workouts) {
+    public WorkoutsOverviewAdapter(Context context, List<Workout> workouts, OnParseObjectClickListener listener) {
         this.workouts = workouts;
         this.context = context;
+        this.listener = listener;
     }
 
     private Context getContext() {
@@ -65,11 +69,14 @@ public class WorkoutsOverviewAdapter extends RecyclerView.Adapter<WorkoutsOvervi
 
         if (titleImage != null) {
             titleImage.getDataInBackground(new GetDataCallback() {
+
+                @Override
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
                         Bitmap titleImageBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                         titleImageView.setImageBitmap(titleImageBitmap);
                         Palette.from(titleImageBitmap).generate(new Palette.PaletteAsyncListener() {
+
                             @Override
                             public void onGenerated(Palette palette) {
                                 Palette.Swatch swatch = Helper.getProfileSwatch(palette);
@@ -77,11 +84,15 @@ public class WorkoutsOverviewAdapter extends RecyclerView.Adapter<WorkoutsOvervi
                                     workoutWrapper.setBackgroundColor(swatch.getRgb());
                                 }
                             }
+
                         });
                     }
                 }
+
             });
         }
+
+        viewHolder.bind(workout, listener);
     }
 
     @Override
@@ -103,5 +114,15 @@ public class WorkoutsOverviewAdapter extends RecyclerView.Adapter<WorkoutsOvervi
             titleImageView = (ImageView) itemView.findViewById(R.id.title_image);
             workoutWrapper = (RelativeLayout) itemView.findViewById(R.id.workout_wrapper);
         }
+
+        public void bind(final Workout workout, final OnParseObjectClickListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    listener.onParseObjectClick(workout);
+                }
+            });
+        }
+
     }
+
 }
