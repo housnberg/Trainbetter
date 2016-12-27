@@ -44,9 +44,23 @@ public class Exercise extends ParseObject {
      * @see FindCallback
      */
     public void findCorrespondingImages(FindCallback<Image> findCallback) {
-        ParseQuery<Image> imageQuery = ParseQuery.getQuery(Image.class);
-        imageQuery.whereEqualTo(Image.EXERCISE_POINTER, this);
-        imageQuery.findInBackground(findCallback);
+        ParseQuery<Image> query = ParseQuery.getQuery(Image.class);
+        query.whereEqualTo(Image.EXERCISE_POINTER, this);
+        query.orderByAscending(Image.ORDER);
+        query.findInBackground(findCallback);
+    }
+
+    /**
+     * Finds the title {@link Image} object which belong to an {@link Exercise} asynchronously.
+     * @param findCallback The callback to handle of type {@link FindCallback}.
+     * @see Image
+     * @see FindCallback
+     */
+    public void findTitleImage(FindCallback<Image> findCallback) {
+        ParseQuery<Image> query = ParseQuery.getQuery(Image.class);
+        query.whereEqualTo(Image.EXERCISE_POINTER, this);
+        query.whereEqualTo(Image.IS_TITLE_IMAGE, true);
+        query.findInBackground(findCallback);
     }
 
 }

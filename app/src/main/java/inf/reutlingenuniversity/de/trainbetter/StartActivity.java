@@ -89,7 +89,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     public void startMainActivity(int from) {
-        Intent loginIntent = new Intent(StartActivity.this, WorkoutOverviewActivity.class);
+        Intent loginIntent = new Intent(StartActivity.this, WorkoutsOverviewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt(StartActivity.FROM, from);
         loginIntent.putExtras(bundle);

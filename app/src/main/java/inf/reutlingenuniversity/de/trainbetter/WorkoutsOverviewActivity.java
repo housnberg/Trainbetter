@@ -7,12 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -21,9 +18,7 @@ import com.parse.ParseUser;
 import java.util.List;
 
 import inf.reutlingenuniversity.de.trainbetter.loginout.LoginFragment;
-import inf.reutlingenuniversity.de.trainbetter.model.Exercise;
 import inf.reutlingenuniversity.de.trainbetter.model.Workout;
-import inf.reutlingenuniversity.de.trainbetter.model.WorkoutExercise;
 import inf.reutlingenuniversity.de.trainbetter.registration.RegistrationFragment;
 import inf.reutlingenuniversity.de.trainbetter.utils.ComponentHelper;
 import inf.reutlingenuniversity.de.trainbetter.utils.Status;
@@ -33,7 +28,7 @@ import inf.reutlingenuniversity.de.trainbetter.workout.WorkoutsOverviewAdapter;
 /**
  * Created by EL on 05.12.2016.
  */
-public class WorkoutOverviewActivity extends LoggedInActivity {
+public class WorkoutsOverviewActivity extends LoggedInActivity {
 
     private View contentWrapper;
     private Toolbar toolbar;
@@ -44,7 +39,7 @@ public class WorkoutOverviewActivity extends LoggedInActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_workout_overview);
+        setContentView(R.layout.activity_workouts_overview);
 
         contentWrapper = findViewById(R.id.content_wrapper);
 
@@ -65,28 +60,13 @@ public class WorkoutOverviewActivity extends LoggedInActivity {
             public void done(List<Workout> resultSet, ParseException e) {
                 if (e == null) {
                     workouts = resultSet;
-                    //ParseObject.pinAllInBackground(workouts);
-                    workouts.get(0).findWorkoutExercises(new FindCallback<WorkoutExercise>() {
-                        @Override
-                        public void done(List<WorkoutExercise> objects, ParseException e) {
-                            for (WorkoutExercise object : objects) {
-                                Log.i("parse", object.getOrder() + "");
-                                object.getExercise().fetchIfNeededInBackground(new GetCallback<Exercise>() {
-                                    @Override
-                                    public void done(Exercise object, ParseException e) {
-                                        Log.i("parse", object.getName());
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    setUpRecyclerView();
+                    setupRecyclerView();
                 }
             }
         });
     }
 
-    private void setUpRecyclerView() {
+    private void setupRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycer_view);
 
         WorkoutsOverviewAdapter woAdapter = new WorkoutsOverviewAdapter(this, workouts, new OnParseObjectClickListener() {

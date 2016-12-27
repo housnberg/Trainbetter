@@ -4,19 +4,25 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.graphics.Palette;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
+import java.util.List;
+
 import inf.reutlingenuniversity.de.trainbetter.model.Workout;
-import inf.reutlingenuniversity.de.trainbetter.utils.Helper;
+import inf.reutlingenuniversity.de.trainbetter.model.WorkoutExercise;
+import inf.reutlingenuniversity.de.trainbetter.workout.WorkoutDetailAdapter;
 
 /**
  * Created by EL on 22.12.2016.
@@ -26,15 +32,32 @@ public class WorkoutDetailsActivity extends LoggedInActivity {
 
     private Toolbar toolbar;
     private ImageView titleImageView;
+    private TextView workoutDescTextView;
+    private TextView roundsTextView;
+    private TextView pauseBetweenExercisesTextView;
+    private TextView pauseBetweenRoundsTextView;
+    private TextView pauseBetweenSetsTextView;
+    private RelativeLayout pauseBetweenSetsWrapper;
+
     private Workout workout;
+    private List<WorkoutExercise> workoutExercises;
+    private static String secondsShort;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        secondsShort = getResources().getString(R.string.seconds_short);
+
         setContentView(R.layout.activity_workout_details);
         titleImageView = (ImageView) findViewById(R.id.title_image);
+        workoutDescTextView = (TextView) findViewById(R.id.workout_description);
+        roundsTextView = (TextView) findViewById(R.id.workout_rounds);
+        pauseBetweenExercisesTextView = (TextView) findViewById(R.id.workout_pause_between_exercises);
+        pauseBetweenRoundsTextView = (TextView) findViewById(R.id.workout_pause_between_rounds);
+        pauseBetweenSetsTextView = (TextView) findViewById(R.id.workout_pause_between_sets);
 
+        pauseBetweenSetsWrapper = (RelativeLayout) findViewById(R.id.workout_pause_between_sets_wrapper);
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
@@ -45,9 +68,53 @@ public class WorkoutDetailsActivity extends LoggedInActivity {
                 e.printStackTrace();
             }
         }
+        roundsTextView.setText(String.valueOf(workout.getRounds()));
+        pauseBetweenExercisesTextView.setText(workout.getPauseBetweenExercises() + " " + secondsShort);
+        pauseBetweenRoundsTextView.setText(workout.getPauseBetweenRounds() + " " + secondsShort);
+        pauseBetweenSetsTextView.setText(workout.getPauseBetweenSets() + " " + secondsShort);
+        workoutDescTextView.setText(workout.getDescription());
+
+        workout.findWorkoutExercises(new FindCallback<WorkoutExercise>() {
+
+            @Override
+            public void done(List<WorkoutExercise> resultSet, ParseException e) {
+                workoutExercises = resultSet;
+                workoutExercises.get(0).getWorkoutExercisesWithSetsGreaterThan(new FindCallback<WorkoutExercise>() {
+
+                    @Override
+                    public void done(List<WorkoutExercise> objects, ParseException e) {
+                        if (objects.isEmpty()) {
+                            pauseBetweenSetsWrapper.setVisibility(View.GONE);
+                        }
+                    }
+
+                }, 1);
+                setupRecyclerView();
+            }
+        });
 
         initToolbar();
+        setTitleImage();
 
+    }
+
+    private void setupRecyclerView() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycer_view);
+
+        WorkoutDetailAdapter wdAdapter = new WorkoutDetailAdapter(this, workoutExercises, new OnParseObjectClickListener() {
+            @Override
+            public void onParseObjectClick(ParseObject workout) {
+                //startWorkoutDetailsActivity((Workout) workout);
+            }
+        });
+
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setAdapter(wdAdapter);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void setTitleImage() {
         ParseFile titleImage = workout.getTitleImage();
 
         if (titleImage != null) {
@@ -63,7 +130,6 @@ public class WorkoutDetailsActivity extends LoggedInActivity {
 
             });
         }
-
     }
 
     private void initToolbar() {

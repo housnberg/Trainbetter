@@ -21,6 +21,7 @@ public class Workout extends ParseObject {
     public static final String ROUNDS = "rounds";
     public static final String PAUSE_BETWEEN_EXERCISES = "pauseBetweenExercises";
     public static final String PAUSE_BETWEEN_ROUNDS = "pauseBetweenRounds";
+    public static final String PAUSE_BETWEEN_SETS = "pauseBetweenSets";
     public static final String USER_POINTER = "userPointer";
     public static final String TITLE_IMAGE = "titleImage";
 
@@ -64,6 +65,14 @@ public class Workout extends ParseObject {
         this.put(Workout.PAUSE_BETWEEN_ROUNDS, pauseBetweenRounds);
     }
 
+    public int getPauseBetweenSets() {
+        return this.getInt(Workout.PAUSE_BETWEEN_SETS);
+    }
+
+    public void setPauseBetweenSets(int pauseBetweenSets) {
+        this.put(Workout.PAUSE_BETWEEN_SETS, pauseBetweenSets);
+    }
+
     public ParseUser getUserPointer() {
         return this.getParseUser(Workout.USER_POINTER);
     }
@@ -87,8 +96,9 @@ public class Workout extends ParseObject {
      * @see FindCallback
      */
     public void findWorkoutExercises(FindCallback<WorkoutExercise> findCallback) {
-        ParseQuery<WorkoutExercise> imageQuery = ParseQuery.getQuery(WorkoutExercise.class);
-        imageQuery.whereEqualTo(WorkoutExercise.WORKOUT_POINTER, this);
-        imageQuery.findInBackground(findCallback);
+        ParseQuery<WorkoutExercise> query = ParseQuery.getQuery(WorkoutExercise.class);
+        query.whereEqualTo(WorkoutExercise.WORKOUT_POINTER, this);
+        query.orderByAscending(WorkoutExercise.ORDER);
+        query.findInBackground(findCallback);
     }
  }

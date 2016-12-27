@@ -15,6 +15,7 @@ public class Image extends ParseObject {
     public static final String IMAGE_FILE = "imageFile";
     public static final String EXERCISE_POINTER = "exercisePointer";
     public static final String ORDER = "order";
+    public static final String IS_TITLE_IMAGE = "isTitleImage";
 
     public String getDescription() {
         return this.getString(Image.DESCRIPTION);
@@ -46,6 +47,14 @@ public class Image extends ParseObject {
 
     public void setOrder(int order) {
         this.put(Image.ORDER, order);
+    }
+
+    public boolean isTitleImage() {
+        return this.getBoolean(Image.IS_TITLE_IMAGE);
+    }
+
+    public void setIsTitleImage(boolean order) {
+        this.put(Image.IS_TITLE_IMAGE, order);
     }
 
 }

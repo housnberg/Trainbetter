@@ -31,4 +31,21 @@
     <string name="success_loggedin_signedup">Successfully %1$s!</string>
     <string name="success_loggedin">logged in</string>
     <string name="success_signedup">signed up</string>
+
+    <!-- Units -->
+    <string name="seconds">Seconds</string>
+    <string name="seconds_short">Sec</string>
+    <string name="repetitions">Repetitions</string>
+    <string name="repetition">Repetition</string>
+    <string name="repetitions_short">Reps</string>
+    <string name="repetition_short">Reps</string>
+    <string name="sets">Sets</string>
+    <string name="set">Set</string>
+
+    <string name="pause_between_rounds">Pause between rounds</string>
+    <string name="pause_between_exercises">Pause between exercises</string>
+    <string name="pause_between_sets">Pause between sets</string>
+    <string name="rounds">Rounds</string>
+    <string name="description">Description</string>
+    <string name="exercises">Exercises</string>
 </resources>

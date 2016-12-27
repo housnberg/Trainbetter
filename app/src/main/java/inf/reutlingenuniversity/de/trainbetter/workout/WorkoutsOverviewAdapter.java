@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
 
 import java.util.List;
 
@@ -39,32 +38,22 @@ public class WorkoutsOverviewAdapter extends RecyclerView.Adapter<WorkoutsOvervi
         this.listener = listener;
     }
 
-    private Context getContext() {
-        return context;
-    }
-
     @Override
     public WorkoutsOverviewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View workoutOverviewView = inflater.inflate(R.layout.item_workout, parent, false);
-
         ViewHolder viewHolder = new ViewHolder(workoutOverviewView);
+
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(WorkoutsOverviewAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final WorkoutsOverviewAdapter.ViewHolder viewHolder, int position) {
         Workout workout = workouts.get(position);
 
-        TextView workoutNameTextView = viewHolder.workoutNameTextView;
-        TextView workoutDescriptionTextView = viewHolder.workoutDescriptionTextView;
-        final ImageView titleImageView = viewHolder.titleImageView;
-        final RelativeLayout workoutWrapper = viewHolder.workoutWrapper;
-
-        workoutNameTextView.setText(workout.getName());
-        workoutDescriptionTextView.setText(workout.getDescription());
+        viewHolder.workoutNameTextView.setText(workout.getName());
+        viewHolder.workoutDescriptionTextView.setText(workout.getDescription());
         ParseFile titleImage = workout.getTitleImage();
 
         if (titleImage != null) {
@@ -74,14 +63,14 @@ public class WorkoutsOverviewAdapter extends RecyclerView.Adapter<WorkoutsOvervi
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
                         Bitmap titleImageBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        titleImageView.setImageBitmap(titleImageBitmap);
+                        viewHolder.titleImageView.setImageBitmap(titleImageBitmap);
                         Palette.from(titleImageBitmap).generate(new Palette.PaletteAsyncListener() {
 
                             @Override
                             public void onGenerated(Palette palette) {
                                 Palette.Swatch swatch = Helper.getProfileSwatch(palette);
                                 if (swatch != null) {
-                                    workoutWrapper.setBackgroundColor(swatch.getRgb());
+                                    viewHolder.workoutWrapper.setBackgroundColor(swatch.getRgb());
                                 }
                             }
 
@@ -97,11 +86,12 @@ public class WorkoutsOverviewAdapter extends RecyclerView.Adapter<WorkoutsOvervi
 
     @Override
     public int getItemCount() {
-        return workouts.size();
+        return workouts != null ? workouts.size() : 0;
     }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+
         public TextView workoutNameTextView;
         public TextView workoutDescriptionTextView;
         public ImageView titleImageView;

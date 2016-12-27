@@ -25,9 +25,9 @@ public class ComponentHelper {
 
         if (Status.ERROR == status) {
             snackBarView.setBackgroundColor(context.getResources().getColor(R.color.red_A400_loud));
-            snackbar.setActionTextColor(context.getResources().getColor(R.color.colorPrimaryText));
+            snackbar.setActionTextColor(context.getResources().getColor(R.color.colorPrimaryTextLight));
         } else if (Status.INFO == status) {
-            snackBarView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryText));
+            snackBarView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryTextLight));
             snackbar.setActionTextColor(context.getResources().getColor(R.color.red_A400_loud));
         } else {
             snackBarView.setBackgroundColor(context.getResources().getColor(R.color.green_A400_loud));
@@ -48,9 +48,9 @@ public class ComponentHelper {
 
         if (Status.ERROR == status) {
             snackBarView.setBackgroundColor(context.getResources().getColor(R.color.red_A400_loud));
-            snackbar.setActionTextColor(context.getResources().getColor(R.color.colorPrimaryText));
+            snackbar.setActionTextColor(context.getResources().getColor(R.color.colorPrimaryTextLight));
         } else if (Status.INFO == status) {
-            snackBarView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryText));
+            snackBarView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryTextLight));
             snackbar.setActionTextColor(context.getResources().getColor(R.color.red_A400_loud));
         } else {
             snackBarView.setBackgroundColor(context.getResources().getColor(R.color.green_A400_loud));

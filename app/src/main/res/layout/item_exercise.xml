@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+    
+    <com.github.siyamed.shapeimageview.CircularImageView
+        android:id="@+id/title_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/cali"
+        android:scaleType="centerCrop"
+        android:cropToPadding="false"
+        android:adjustViewBounds="false" />
+
+    <TextView
+        android:id="@+id/exercise_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryTextDark"
+        android:maxLines="1"
+        android:includeFontPadding="false"
+        android:textSize="16sp"
+        android:ellipsize="end"
+        android:layout_toLeftOf="@+id/exercise_information_wrapper"
+        android:text="Inverted chinup inclines pushups"
+        android:layout_marginLeft="56dp"/>
+
+    <TextView
+        android:id="@+id/exercise_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/exercise_name"
+        android:textSize="12sp"
+        android:textColor="@color/colorSecondaryTextDark"
+        android:includeFontPadding="false"
+        android:layout_marginLeft="56dp"/>
+
+    <LinearLayout
+        android:id="@id/exercise_information_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="16dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/exercise_sets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 Sets"
+            android:textSize="12sp"
+            android:textColor="@color/colorSecondaryTextDark"
+            android:layout_toLeftOf="@+id/divider"/>
+
+        <ImageView
+            android:id="@id/divider"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_arrow_forward_white_24dp"
+            android:tint="@color/colorDisabledDark"
+            android:layout_height="14sp"
+            android:layout_toStartOf="@+id/exercise_repetitions"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:id="@id/exercise_repetitions"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorSecondaryTextDark"
+            android:layout_height="wrap_content"
+            android:text="12 Sec"
+            android:textSize="12sp"
+            android:layout_alignParentRight="true"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
