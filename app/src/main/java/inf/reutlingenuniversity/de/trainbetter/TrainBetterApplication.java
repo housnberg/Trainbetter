@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 
 import inf.reutlingenuniversity.de.trainbetter.model.Exercise;
@@ -46,6 +47,8 @@ public class TrainBetterApplication extends Application {
                 .applicationId(parseAppId)
                 .server(parseAppUrl)
                 .build());
+
+        ParseInstallation.getCurrentInstallation().saveInBackground();
 
         ParseACL defaultACL = new ParseACL();
         ParseACL.setDefaultACL(defaultACL, true);
