@@ -1,9 +1,11 @@
 package inf.reutlingenuniversity.de.trainbetter;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import inf.reutlingenuniversity.de.trainbetter.model.Workout;
 import inf.reutlingenuniversity.de.trainbetter.model.WorkoutExercise;
+import inf.reutlingenuniversity.de.trainbetter.utils.ComponentHelper;
 import inf.reutlingenuniversity.de.trainbetter.workout.WorkoutDetailAdapter;
 
 /**
@@ -29,6 +32,8 @@ import inf.reutlingenuniversity.de.trainbetter.workout.WorkoutDetailAdapter;
  */
 
 public class WorkoutDetailsActivity extends LoggedInActivity {
+
+    public static final int REQUEST_CODE = 12;
 
     private Toolbar toolbar;
     private ImageView titleImageView;
@@ -38,6 +43,8 @@ public class WorkoutDetailsActivity extends LoggedInActivity {
     private TextView pauseBetweenRoundsTextView;
     private TextView pauseBetweenSetsTextView;
     private RelativeLayout pauseBetweenSetsWrapper;
+
+    private FloatingActionButton floatingActionButton;
 
     private Workout workout;
     private List<WorkoutExercise> workoutExercises;
@@ -56,6 +63,7 @@ public class WorkoutDetailsActivity extends LoggedInActivity {
         pauseBetweenExercisesTextView = (TextView) findViewById(R.id.workout_pause_between_exercises);
         pauseBetweenRoundsTextView = (TextView) findViewById(R.id.workout_pause_between_rounds);
         pauseBetweenSetsTextView = (TextView) findViewById(R.id.workout_pause_between_sets);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
 
         pauseBetweenSetsWrapper = (RelativeLayout) findViewById(R.id.workout_pause_between_sets_wrapper);
         Bundle extras = getIntent().getExtras();
@@ -79,17 +87,21 @@ public class WorkoutDetailsActivity extends LoggedInActivity {
             @Override
             public void done(List<WorkoutExercise> resultSet, ParseException e) {
                 workoutExercises = resultSet;
-                workoutExercises.get(0).getWorkoutExercisesWithSetsGreaterThan(new FindCallback<WorkoutExercise>() {
+                if (!workoutExercises.isEmpty()) {
+                    workoutExercises.get(0).getWorkoutExercisesWithSetsGreaterThan(new FindCallback<WorkoutExercise>() {
 
-                    @Override
-                    public void done(List<WorkoutExercise> objects, ParseException e) {
-                        if (objects.isEmpty()) {
-                            pauseBetweenSetsWrapper.setVisibility(View.GONE);
+                        @Override
+                        public void done(List<WorkoutExercise> objects, ParseException e) {
+                            if (objects.isEmpty()) {
+                                pauseBetweenSetsWrapper.setVisibility(View.GONE);
+                            }
                         }
-                    }
 
-                }, 1);
-                setupRecyclerView();
+                    }, 1);
+                    setupRecyclerView();
+                } else {
+                    //TODO Snackbar no Exercises assigned
+                }
             }
         });
 
@@ -148,4 +160,17 @@ public class WorkoutDetailsActivity extends LoggedInActivity {
 
     }
 
+    public void startWorkout(View view) {
+        Intent countdownIntent = new Intent(this, CountdownActivity.class);
+        countdownIntent.putExtra("requestCode", REQUEST_CODE);
+        countdownIntent.putExtra("id", workout.getObjectId());
+        startActivity(countdownIntent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent){
+        Intent workoutRunIntent = new Intent(this, WorkoutRunActivity.class);
+        workoutRunIntent.putExtra("id", workout.getObjectId());
+        startActivity(workoutRunIntent);
+    }
 }

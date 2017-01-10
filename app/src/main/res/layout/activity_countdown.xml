@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f6f7fb">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:id="@+id/current_round_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16px"
+            android:padding="16px"
+            android:elevation="4dp"
+            android:background="@color/colorPrimaryTextLight">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Round"
+                android:textSize="16sp"
+                android:padding="16dp"
+                android:includeFontPadding="false"
+                android:layout_toLeftOf="@+id/current_round"/>
+
+            <TextView
+                android:id="@id/current_round"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Round"
+                android:textSize="12sp"
+                android:padding="16dp"
+                android:includeFontPadding="false"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/next_exercise"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Next exercise"
+            android:textSize="16sp"
+            android:includeFontPadding="false"
+            android:layout_below="@id/current_round_wrapper"
+            android:padding="16dp"
+            android:layout_margin="16px"/>
+
+
+        <include layout="@layout/item_exercise"
+            android:id="@+id/include_item_exercise"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/next_exercise"
+            android:layout_margin="16px"
+            android:background="@color/colorPrimaryTextLight"
+            android:elevation="4dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/include_item_exercise"
+            android:layout_above="@+id/button_skip_pause">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="75sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/seconds_short"
+                    android:textSize="50sp"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button_skip_pause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:text="skipt pause"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="8dp"/>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

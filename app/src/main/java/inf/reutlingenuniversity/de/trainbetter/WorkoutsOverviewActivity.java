@@ -86,7 +86,7 @@ public class WorkoutsOverviewActivity extends LoggedInActivity {
     }
 
     private void startWorkoutDetailsActivity(Workout workout) {
-        Intent workoutDetailIntent = new Intent(getApplicationContext(), WorkoutDetailsActivity.class);
+        Intent workoutDetailIntent = new Intent(this, WorkoutDetailsActivity.class);
         workoutDetailIntent.putExtra("id", workout.getObjectId());
         startActivity(workoutDetailIntent);
     }
