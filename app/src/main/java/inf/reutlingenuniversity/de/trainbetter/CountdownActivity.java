@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -52,7 +53,9 @@ public class CountdownActivity extends LoggedInActivity {
     private TextView nextExerciseRepsTextView;
     private TextView nextExerciseSetsTextView;
     private TextView nextExerciseDescriptionTextView;
+    private TextView pauseTextView;
     private CircularImageView nextExerciseTitleImage;
+    private Resources resources;
 
     private List<WorkoutExercise> workoutExercises;
     private Exercise nextExercise;
@@ -94,6 +97,8 @@ public class CountdownActivity extends LoggedInActivity {
         nextExerciseDescriptionTextView = (TextView) findViewById(R.id.exercise_description);
         nextExerciseSetsTextView = (TextView) findViewById(R.id.exercise_sets);
         nextExerciseTitleImage = (CircularImageView) findViewById(R.id.title_image);
+        pauseTextView = (TextView) findViewById(R.id.pause);
+        resources = getResources();
 
         Bundle extras = getIntent().getExtras();
 
@@ -171,7 +176,7 @@ public class CountdownActivity extends LoggedInActivity {
         }
         nextExerciseNameTextView.setText(nextExercise.getName());
         nextExerciseDescriptionTextView.setText(nextExercise.getDescription());
-        currentRoundTextView.setText(String.valueOf(currentRound + 1));
+        currentRoundTextView.setText((currentRound + 1) + "/" + workout.getRounds());
 
         String repetitionsText = workoutExercises.get(currentExercise).getRepetitions() + " ";
         repetitionsText += workoutExercises.get(currentExercise).isRepeatable() ? this.getResources().getString(R.string.repetitions_short) : this.getResources().getString(R.string.seconds_short);
@@ -221,7 +226,6 @@ public class CountdownActivity extends LoggedInActivity {
                 finish();
             }
         });
-
     }
 
     @Override
@@ -245,20 +249,26 @@ public class CountdownActivity extends LoggedInActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //if (resultCode == RESULT_OK) {
 
+        String pauseText = resources.getString(R.string.pause) + ". ";
         if (currentExercise == workoutExercises.size() - 1) {
             currentRound++;
             currentExercise = 0;
             timeInSeconds = workout.getPauseBetweenRounds();
+            pauseText += String.format(resources.getString(R.string.get_ready_for), resources.getString(R.string.round).toLowerCase());
+            pauseTextView.setText("Get ready for next round!");
         } else {
             if (currentSet < workoutExercises.get(currentExercise).getSets() - 1) {
                 timeInSeconds = workout.getPauseBetweenSets();
                 currentSet++;
+                pauseText += String.format(resources.getString(R.string.get_ready_for), resources.getString(R.string.set).toLowerCase());
             } else {
                 currentSet = 0;
                 currentExercise++;
                 timeInSeconds = workout.getPauseBetweenExercises();
+                pauseText += String.format(resources.getString(R.string.get_ready_for), resources.getString(R.string.exercise).toLowerCase());
             }
         }
+        pauseTextView.setText(pauseText);
         timeInSeconds++;
         loadNextExercise();
     }

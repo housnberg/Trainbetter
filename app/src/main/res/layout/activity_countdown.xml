@@ -27,6 +27,16 @@
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <TextView
+            android:id="@+id/pause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/get_ready_for_workout"
+            android:textSize="16sp"
+            android:includeFontPadding="false"
+            android:padding="16dp"
+            android:layout_margin="16px"/>
+
         <RelativeLayout
             android:id="@+id/current_round_wrapper"
             android:layout_width="match_parent"
@@ -34,6 +44,7 @@
             android:layout_margin="16px"
             android:padding="16px"
             android:elevation="4dp"
+            android:layout_below="@id/pause"
             android:background="@color/colorPrimaryTextLight">
 
             <TextView
@@ -53,7 +64,8 @@
                 android:textSize="12sp"
                 android:padding="16dp"
                 android:includeFontPadding="false"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentRight="true"
+                android:textColor="@color/colorSecondaryTextDark"/>
 
         </RelativeLayout>
 
@@ -67,7 +79,6 @@
             android:layout_below="@id/current_round_wrapper"
             android:padding="16dp"
             android:layout_margin="16px"/>
-
 
         <include layout="@layout/item_exercise"
             android:id="@+id/include_item_exercise"

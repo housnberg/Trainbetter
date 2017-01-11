@@ -1,17 +1,14 @@
 package inf.reutlingenuniversity.de.trainbetter;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Debug;
-import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,10 +19,12 @@ import com.parse.ParseObject;
 import java.util.List;
 
 import inf.reutlingenuniversity.de.trainbetter.model.Exercise;
-import inf.reutlingenuniversity.de.trainbetter.model.Workout;
+import inf.reutlingenuniversity.de.trainbetter.model.Image;
 import inf.reutlingenuniversity.de.trainbetter.model.WorkoutExercise;
 import inf.reutlingenuniversity.de.trainbetter.services.CountdownService;
+import inf.reutlingenuniversity.de.trainbetter.utils.ComponentHelper;
 import inf.reutlingenuniversity.de.trainbetter.utils.TextToSpeechController;
+import inf.reutlingenuniversity.de.trainbetter.workout.ExerciseImageAdapter;
 
 /**
  * Created by EL on 08.01.2017.
@@ -41,34 +40,21 @@ public class WorkoutRunActivity extends LoggedInActivity implements View.OnClick
 
     private Toolbar toolbar;
     private TextView timeTextView;
-
+    private TextView exerciseRepetitionsTextView;
+    private ViewPager exerciseImagesViewPager;
+    private PagerAdapter exerciseImagesPageAdapter;
+    private MenuItem navigateBefore;
+    private MenuItem navigateNext;
     private WorkoutExercise workoutExercise;
     private Exercise exercise;
 
-    /*
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            CountdownService.LocalBinder binder = (CountdownService.LocalBinder) service;
-            countdownService = binder.getService();
-            countdownService.countdownTimer((reps + 1) * 1000);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            countdownService = null;
-        }
-
-    };
-    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_run);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        exerciseRepetitionsTextView = (TextView) findViewById(R.id.exercise_repetitions);
 
         Bundle extras = getIntent().getExtras();
 
@@ -86,7 +72,18 @@ public class WorkoutRunActivity extends LoggedInActivity implements View.OnClick
                 e.printStackTrace();
             }
         }
-        toolbar.setTitle(exercise.getName());
+        initToolbar(exercise.getName());
+
+        String exerciseRepetitionsText = workoutExercise.getRepetitions() + " ";
+        exerciseRepetitionsText += workoutExercise.isRepeatable() ? this.getResources().getString(R.string.repetitions_short) : this.getResources().getString(R.string.seconds_short);
+        exerciseRepetitionsTextView.setText(exerciseRepetitionsText);
+
+        exercise.findCorrespondingImages(new FindCallback<Image>() {
+            @Override
+            public void done(List<Image> resultSet, ParseException e) {
+                setupPager(resultSet);
+            }
+        });
 
         if (getCallingActivity() == null) {
             //This Activity was called by startActivity
@@ -167,69 +164,91 @@ public class WorkoutRunActivity extends LoggedInActivity implements View.OnClick
         */
     }
 
-    /*
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void initToolbar(String exerciseName) {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setTitle(exerciseName);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver((tickReceiver),
-                new IntentFilter(CountdownService.CTS_TICK)
-        );
-        LocalBroadcastManager.getInstance(this).registerReceiver((finishReceiver),
-                new IntentFilter(CountdownService.CTS_FINISH)
-        );
-
-        long key = exercises.get(currExercise).getId();
-        if(!exercisesRepeatable.get(key)){
-            Intent intent = new Intent(this, CountdownTimerService.class);
-            if(!isBound)
-                isBound = bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     }
 
-    @Override
-    protected void onStop() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(tickReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(finishReceiver);
-        textToSpeechController.shutDown();
-        super.onStop();
+    private void setupPager(List<Image> images) {
+        exerciseImagesPageAdapter = new ExerciseImageAdapter(getSupportFragmentManager(), images);
+        exerciseImagesViewPager = (ViewPager) findViewById(R.id.pager);
+        exerciseImagesViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (position == 0) {
+                    ComponentHelper.setMenuIconEnabled(navigateBefore, false);
+                    ComponentHelper.setMenuIconEnabled(navigateNext, true);
+                } else if (position == exerciseImagesPageAdapter.getCount() - 1) {
+                    ComponentHelper.setMenuIconEnabled(navigateNext, false);
+                    ComponentHelper.setMenuIconEnabled(navigateBefore, true);
+                } else {
+                    ComponentHelper.setMenuIconEnabled(navigateBefore, true);
+                    ComponentHelper.setMenuIconEnabled(navigateNext, true);
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                //Do nothing because we don't need to override this method
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                //Do nothing because we don't need to override this method
+            }
+        });
+        exerciseImagesViewPager.setAdapter(exerciseImagesPageAdapter);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent){
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar_navigate_images, menu);
+        navigateBefore = menu.findItem(R.id.action_navigate_before);
+        navigateNext = menu.findItem(R.id.action_navigate_next);
 
+        return true;
+    }
 
-        if(currRound < workout.getRounds()){
-            if(currExercise < (exercises.size()-1)){
-                currExercise++;
-            }else{
-                currRound++;
-                currExercise = 0;
-            }
-
-            setImage();
-            setReps();
-
-            long key = exercises.get(currExercise).getId();
-            if(!exercisesRepeatable.get(key)){
-                changeButton(false);
-                button.setTextColor(getResources().getColor(R.color.colorSecondaryText));
-                button.setBackground(getResources().getDrawable(android.R.color.transparent));
-                countdownTimerService.countdownTimer((reps + 1) * 1000);
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        int currentItem = exerciseImagesViewPager.getCurrentItem();
+        if (itemId == R.id.action_navigate_before) {
+            ComponentHelper.setMenuIconEnabled(navigateNext, true);
+            exerciseImagesViewPager.setCurrentItem(currentItem - 1);
+            return true;
+        } else if (itemId == R.id.action_navigate_next) {
+            ComponentHelper.setMenuIconEnabled(navigateBefore, true);
+            exerciseImagesViewPager.setCurrentItem(currentItem + 1);
+            return true;
         } else {
-            time = System.currentTimeMillis() - time;
-            Intent intentFinish = new Intent(this, FinishActivity.class);
-            intentFinish.putExtra("workoutTime", time);
-            intentFinish.putExtra("data", workout);
-            startActivity(intentFinish);
+            return super.onOptionsItemSelected(item);
         }
-        exerciseName.setText(exercises.get(currExercise).getName());
-
-
     }
-    */
+
+    @Override
+    public void onBackPressed() {
+        if (exerciseImagesViewPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else {
+            // Otherwise, select the previous step.
+            exerciseImagesViewPager.setCurrentItem(exerciseImagesViewPager.getCurrentItem() - 1);
+        }
+    }
 
     @Override
     public void onClick(View view) {

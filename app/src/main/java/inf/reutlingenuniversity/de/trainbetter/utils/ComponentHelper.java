@@ -3,6 +3,7 @@ package inf.reutlingenuniversity.de.trainbetter.utils;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,6 +14,15 @@ import inf.reutlingenuniversity.de.trainbetter.R;
  */
 
 public class ComponentHelper {
+
+    public static void setMenuIconEnabled(MenuItem menuItem, boolean enabled) {
+        menuItem.setEnabled(enabled);
+        if (enabled) {
+            menuItem.getIcon().setAlpha(255);
+        } else {
+            menuItem.getIcon().setAlpha(128);
+        }
+    }
 
     public static Snackbar createSnackbar(Context context, View view, int message, Status status) {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
